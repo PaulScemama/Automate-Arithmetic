@@ -1,16 +1,6 @@
 import os
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
-from keras import Sequential
-from keras.layers import Conv2D
-from keras.layers import MaxPooling2D
-from keras.layers import Flatten
-from keras.layers import Dense
-from keras.optimizers import SGD
-from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
-from keras.models import model_from_json
 from PIL import Image
 from mpl_toolkits.axes_grid1 import ImageGrid
 
@@ -67,16 +57,6 @@ times = Image.open(path + '/times/' + random_times[np.random.randint(0,len(rando
 
 '-------------------------------------------------------------------------------------------'
 
-fig = plt.figure(figsize=(4.,4.))
-grid = ImageGrid(fig, 111,
-            nrows_ncols = (2,7),
-            axes_pad = 0.05)
-
-for ax, im in zip(grid, [minus,plus,equals,zero,one,two,three,four,five,six,seven,eight,nine,times]):
-    ax.set_axis_off()
-    ax.imshow(im)
-
-plt.show()
 
 
 '----------------------------------------------------------------------------------------------'
@@ -112,14 +92,16 @@ def random_expression_generator(digit_files, operator_files):
 
 np.random.seed(1)
 unmerged_expression = []
-for i in range(5):
+for i in range(1000):
     unmerged_expression.append(random_expression_generator(random_digit_files, random_operator_files))
 
 '------------------------------------------------------------------------------------------------'
 
 ## Construct the (unfinished) dataset of expressions
 
-def merge_images(expression):
+def merge_images(expressions):
+    counter = 0
+    for expression in expressions:
         images = []
         for element in expression:
             if element[0:3] == 'exp' or element[0:5] == 'times':
@@ -133,11 +115,12 @@ def merge_images(expression):
             mod_image = mod_image.convert("L")
             images.append(mod_image)
 
-        print(images)
+
         images_com = np.hstack((np.asarray(image) for image in images))
         images_com = Image.fromarray(images_com)
-        print(images_com)
-        #imgs_com.save('exp_'+str(i))
-        images_com.save('Test.jpg')
+        images_com.save('/Users/paulscemama/AutomatingArith/equations/equation_' + str(counter), 'JPEG')
+        counter += 1
 
-test = merge_images(unmerged_expression[0])
+#print(len(unmerged_expression))
+merge_images(unmerged_expression)
+
